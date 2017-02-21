@@ -7,8 +7,8 @@ var bodyParser    = require('body-parser');
 var mongoose      = require('mongoose');
 var localStrategy = require('passport-local').Strategy;
 var passport      = require('passport');
-var User          = require('./model/user');
-var config = require('./config');
+var User          = require('./model/user').User;
+var config        = require('./config');
 
 var index = require('./routes/index');
 var users = require('./routes/users');

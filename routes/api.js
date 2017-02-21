@@ -1,8 +1,9 @@
-var express  = require('express');
-var router   = express.Router();
-var User     = require('../model/user');
-var passport = require('passport');
-var verify   = require('../verify');
+var express   = require('express');
+var router    = express.Router();
+var UserModel = require('../model/user');
+var Customer  = UserModel.Customer;
+var passport  = require('passport');
+var verify    = require('../verify');
 
 router.all('/*', verify.verifyUser, function (req, res, next) {
     next();
@@ -15,8 +16,8 @@ router.get('/', function(req, res, next) {
     });
 });
 router.get('/all', function(req, res, next) {
-    User.find({}).then(function (user) {
-        res.json({users: user});
+    Customer.find({}).populate('accounts').then(function (customers) {
+        res.json({customers: customers});
     }, function (err) {
         console.log(err);
     });
@@ -34,24 +35,24 @@ router.post('/login', function (req, res, next) {
     })(req, res, next);
 });
 
-// router.post('/', function(req, res, next) {
-//     var user = new User({
-//         userName: req.body.username,
-//         password: req.body.password,
-//         mail: req.body.mail,
-//         age: req.body.age
-//     }).save();
-// });
-
 router.post('/', function(req, res, next) {
-    User.register( new User({
-        username: req.body.username,
+    var user = new User({
+        userName: req.body.username,
+        password: req.body.password,
         mail: req.body.mail,
         age: req.body.age
-    }), req.body.password, function (err, user) {
-        console.log(err);
-        res.json(user);
-    });
+    }).save();
 });
+
+// router.post('/', function(req, res, next) {
+//     User.register( new User({
+//         username: req.body.username,
+//         mail: req.body.mail,
+//         age: req.body.age
+//     }), req.body.password, function (err, user) {
+//         console.log(err);
+//         res.json(user);
+//     });
+// });
 
 module.exports = router;
