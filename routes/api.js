@@ -5,9 +5,9 @@ var Customer  = UserModel.Customer;
 var passport  = require('passport');
 var verify    = require('../verify');
 
-router.all('/*', verify.verifyUser, function (req, res, next) {
+/*router.all('/*', verify.verifyUser, function (req, res, next) {
     next();
-});
+ });*/
 
 router.get('/', function(req, res, next) {
     res.json({

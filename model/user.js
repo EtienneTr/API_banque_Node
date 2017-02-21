@@ -9,7 +9,8 @@ var User = new Schema({
         type: String,
         unique: true
     },
-    name: String,
+    firstName: String,
+    lastName: String,
     password: String,
     phoneNumber: String,
     gender:  {
@@ -54,7 +55,8 @@ customerModel.find({}).then(
                 }).save().then(function(account2){
                     var customer = new customerModel({
                         mail: 'toto@toto.toto',
-                        name: 'Jean',
+                        firstName: 'Jean',
+                        lastName: 'Burellier',
                         password: 'azerty',
                         phoneNumber: '0611223344',
                         gender: 'M',
@@ -72,7 +74,8 @@ customerModel.find({}).then(
 
             var advisor = new advisorModel({
                 mail: 'tata@tata.tata',
-                name: 'Sebouninet',
+                firstName: 'Sebouninet',
+                lastName: 'Foray',
                 password: 'azerty',
                 phoneNumber: '0611223344',
                 gender: 'M',
@@ -84,7 +87,8 @@ customerModel.find({}).then(
 
             var admin = new userModel({
                 mail: 'tutu@tutu.tutu',
-                name: 'Roger',
+                firstName: 'Roger',
+                lastName: 'Colvray',
                 password: 'azerty',
                 phoneNumber: '0611223344',
                 gender: 'F',
