@@ -1,13 +1,8 @@
 var express   = require('express');
 var router    = express.Router();
-var UserModel = require('../model/user');
-var Customer  = UserModel.Customer;
+var Customer  = require('../model/user').Customer;
 var passport  = require('passport');
 var verify    = require('../verify');
-
-/*router.all('/*', verify.verifyUser, function (req, res, next) {
-    next();
- });*/
 
 router.get('/', function(req, res, next) {
     res.json({
@@ -24,11 +19,18 @@ router.get('/all', function(req, res, next) {
 });
 
 router.post('/login', function (req, res, next) {
-    console.log("toto");
-    passport.authenticate('local', function (err, user, info) {
+    Customer.findOne({$or : [{'username': 'burellier'}]}).then(function (customer) {
+       // console.log(customer);
+    }, function (err) {
         console.log(err);
+    });
+
+    passport.authenticate('local', function (err, user, info) {
         req.logIn(user, function (err) {
-            console.log(err);
+            if(err){
+                res.json("Invalid credentials");
+                return;
+            }
             var token = verify.getToken(user);
             res.json(token);
         })

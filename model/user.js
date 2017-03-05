@@ -11,6 +11,7 @@ var User = new Schema({
     },
     firstName: String,
     lastName: String,
+    username: String,
     password: String,
     phoneNumber: String,
     gender:  {
@@ -34,14 +35,13 @@ var Advisor = User.extend({
     advised: [{type: Schema.Types.ObjectId, ref: 'Customer', default: []}]
 });
 
-module.exports.User     = mongoose.model('User', User);
-
 var customerModel = mongoose.model('Customer', Customer);
 var userModel     = mongoose.model('User', User);
 var advisorModel  = mongoose.model('Advisor', Advisor);
 
 customerModel.find({}).then(
     function(customers) {
+
         if (customers.length == 0) {
             new Account({
                 type: 'Checking account',
@@ -53,11 +53,11 @@ customerModel.find({}).then(
                     balance: 1,
                     history: []
                 }).save().then(function(account2){
-                    var customer = new customerModel({
+                    var customer1 = new customerModel({
                         mail: 'toto@toto.toto',
                         firstName: 'Jean',
                         lastName: 'Burellier',
-                        password: 'azerty',
+                        username: 'burellier',
                         phoneNumber: '0611223344',
                         gender: 'M',
                         birthDate: Date.now(),
@@ -67,36 +67,62 @@ customerModel.find({}).then(
                             account2
                         ]
                     });
+                    // console.log(customer1);
+                    customerModel.register(customer1, 'azerty', function (err, customer1) {
+                        new Account({
+                            type: 'Checking account',
+                            balance: 1,
+                            history: []
+                        }).save().then(function(account1){
+                            new Account({
+                                type: 'Checking account',
+                                balance: 1,
+                                history: []
+                            }).save().then(function(account2){
+                                customerModel.register(new customerModel({
+                                    mail: 'tete@tete.tete',
+                                    firstName: 'Jean',
+                                    lastName: 'Burellier',
+                                    username: 'jean',
+                                    phoneNumber: '0611223344',
+                                    gender: 'M',
+                                    birthDate: Date.now(),
+                                    role: 'customer',
+                                    accounts: [
+                                        account1,
+                                        account2
+                                    ]
+                                }), 'azerty', function(err, customer2){
+                                    advisorModel.register(new advisorModel({
+                                        mail: 'tata@tata.tata',
+                                        firstName: 'Sebouninet',
+                                        lastName: 'Foray',
+                                        username: 'miniForay',
+                                        phoneNumber: '0611223344',
+                                        gender: 'M',
+                                        advised: [customer1, customer2],
+                                        birthDate: Date.now(),
+                                        role: 'advisor'
+                                    }), 'azerty', function () {});
 
-                    customer.save();
+                                });
+                            })
+                        });
+                    });
                 })
             });
 
-            var advisor = new advisorModel({
-                mail: 'tata@tata.tata',
-                firstName: 'Sebouninet',
-                lastName: 'Foray',
-                password: 'azerty',
-                phoneNumber: '0611223344',
-                gender: 'M',
-                birthDate: Date.now(),
-                role: 'advisor'
-            });
-
-            advisor.save();
-
-            var admin = new userModel({
+            userModel.register(new userModel({
                 mail: 'tutu@tutu.tutu',
                 firstName: 'Roger',
                 lastName: 'Colvray',
+                username: 'admin',
                 password: 'azerty',
                 phoneNumber: '0611223344',
                 gender: 'F',
                 birthDate: Date.now(),
                 role: 'admin'
-            });
-
-            admin.save();
+            }), 'azerty', function(){});
         }
     });
 
