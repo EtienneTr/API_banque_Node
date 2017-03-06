@@ -2,7 +2,6 @@ var mongoose              = require('mongoose');
 var Schema                = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 var Account               = require('./account');
-var extend                = require('mongoose-schema-extend');
 
 var User = new Schema({
     mail: {
@@ -22,24 +21,16 @@ var User = new Schema({
     role: {
         type: String,
         enum: ['admin', 'advisor', 'customer']
-    }
+    },
+    accounts: [{type: Schema.Types.ObjectId, ref: 'Account', default: []}],
+    advised: [{type: Schema.Types.ObjectId, ref: 'Customer', default: []}]
 });
 
 User.plugin(passportLocalMongoose);
 
-var Customer = User.extend({
-    accounts: [{type: Schema.Types.ObjectId, ref: 'Account', default: []}]
-});
-
-var Advisor = User.extend({
-    advised: [{type: Schema.Types.ObjectId, ref: 'Customer', default: []}]
-});
-
-var customerModel = mongoose.model('Customer', Customer);
 var userModel     = mongoose.model('User', User);
-var advisorModel  = mongoose.model('Advisor', Advisor);
 
-customerModel.find({}).then(
+userModel.find({}).then(
     function(customers) {
 
         if (customers.length == 0) {
@@ -53,7 +44,7 @@ customerModel.find({}).then(
                     balance: 1,
                     history: []
                 }).save().then(function(account2){
-                    var customer1 = new customerModel({
+                    var customer1 = new userModel({
                         mail: 'toto@toto.toto',
                         firstName: 'Jean',
                         lastName: 'Burellier',
@@ -68,7 +59,7 @@ customerModel.find({}).then(
                         ]
                     });
                     // console.log(customer1);
-                    customerModel.register(customer1, 'azerty', function (err, customer1) {
+                    userModel.register(customer1, 'azerty', function (err, customer1) {
                         new Account({
                             type: 'Checking account',
                             balance: 1,
@@ -79,7 +70,7 @@ customerModel.find({}).then(
                                 balance: 1,
                                 history: []
                             }).save().then(function(account2){
-                                customerModel.register(new customerModel({
+                                userModel.register(new userModel({
                                     mail: 'tete@tete.tete',
                                     firstName: 'Jean',
                                     lastName: 'Burellier',
@@ -93,7 +84,7 @@ customerModel.find({}).then(
                                         account2
                                     ]
                                 }), 'azerty', function(err, customer2){
-                                    advisorModel.register(new advisorModel({
+                                    userModel.register(new userModel({
                                         mail: 'tata@tata.tata',
                                         firstName: 'Sebouninet',
                                         lastName: 'Foray',
@@ -126,6 +117,4 @@ customerModel.find({}).then(
         }
     });
 
-module.exports.User     = userModel;
-module.exports.Customer = customerModel;
-module.exports.Advisor  = advisorModel;
+module.exports = userModel;

@@ -1,17 +1,17 @@
 var express   = require('express');
 var router    = express.Router();
-var Customer  = require('../model/user').Customer;
+var User      = require('../model/user');
 var passport  = require('passport');
-var verify    = require('../verify');
+var verify    = require('./verify');
 
 router.get('/', function(req, res, next) {
     res.json({
-       'status': 200,
+        'status': 200,
         'message': 'Welcome !'
     });
 });
 router.get('/all', function(req, res, next) {
-    Customer.find({}).populate('accounts').then(function (customers) {
+    User.find({'role' : 'customer'}).populate('accounts').then(function (customers) {
         res.json({customers: customers});
     }, function (err) {
         console.log(err);
@@ -19,18 +19,10 @@ router.get('/all', function(req, res, next) {
 });
 
 router.post('/login', function (req, res, next) {
-    Customer.findOne({$or : [{'username': 'burellier'}]}).then(function (customer) {
-       // console.log(customer);
-    }, function (err) {
-        console.log(err);
-    });
-
     passport.authenticate('local', function (err, user, info) {
+        console.log(user);
         req.logIn(user, function (err) {
-            if(err){
-                res.json("Invalid credentials");
-                return;
-            }
+            console.log(err);
             var token = verify.getToken(user);
             res.json(token);
         })

@@ -1,8 +1,4 @@
 node_modules
 npm-debug.log
 npm-debug.log.*
-<<<<<<< HEAD
 .idea
-=======
-/.idea/*
->>>>>>> 24023046aef0a37774b439fe38083d936e6a1edd

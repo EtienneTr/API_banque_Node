@@ -1,3 +1,4 @@
 module.exports = {
-    secretKey: "azertyuiop"
+	'secretKey': 'azerty',
+	'development': 'mongodb://localhost:27017/LTB'
 };
