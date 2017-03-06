@@ -17,7 +17,6 @@ var User = new Schema({
         type: String,
         enum: ['M', 'F']
     },
-    birthDate : Date,
     role: {
         type: String,
         enum: ['admin', 'advisor', 'customer']
@@ -108,12 +107,11 @@ userModel.find({}).then(
                 firstName: 'Roger',
                 lastName: 'Colvray',
                 username: 'admin',
-                password: 'azerty',
                 phoneNumber: '0611223344',
                 gender: 'F',
                 birthDate: Date.now(),
                 role: 'admin'
-            }), 'azerty', function(){});
+            }), 'admin', function(){});
         }
     });
 

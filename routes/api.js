@@ -7,10 +7,11 @@ var verify    = require('./verify');
 router.get('/', function(req, res, next) {
     res.json({
         'status': 200,
-        'message': 'Welcome !'
+        'message': 'Welcome to LTB bank !'
     });
 });
-router.get('/all', function(req, res, next) {
+
+router.get('/all', verify.verifyUser, function(req, res, next) {
     User.find({'role' : 'customer'}).populate('accounts').then(function (customers) {
         res.json({customers: customers});
     }, function (err) {
@@ -24,29 +25,29 @@ router.post('/login', function (req, res, next) {
         req.logIn(user, function (err) {
             console.log(err);
             var token = verify.getToken(user);
-            res.json(token);
+            res.status(200).json({status: 200, message: "Authorized", username: user.username, token: token});
         })
     })(req, res, next);
 });
 
-router.post('/', function(req, res, next) {
-    var user = new User({
-        userName: req.body.username,
-        password: req.body.password,
+router.post('/register', function(req, res, next) {
+    User.register( new User({
         mail: req.body.mail,
-        age: req.body.age
-    }).save();
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        username: req.body.username,
+        password: req.body.password,
+        phoneNumber: req.body.phoneNumber,
+        gender: req.body.gender,
+        role: req.body.role
+    }), req.body.password, function (err, user) {
+        if(err){
+            res.status(500).json({status: 500, message: err.message});
+            return;
+        }
+        res.status(200).json({status: 200, user: user});
+    });
 });
 
-// router.post('/', function(req, res, next) {
-//     User.register( new User({
-//         username: req.body.username,
-//         mail: req.body.mail,
-//         age: req.body.age
-//     }), req.body.password, function (err, user) {
-//         console.log(err);
-//         res.json(user);
-//     });
-// });
 
 module.exports = router;

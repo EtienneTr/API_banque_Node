@@ -20,6 +20,6 @@ exports.verifyUser = function(req, res, next) {
 		})
 	}
 	else {
-		res.status(401).json({status: 401, message: "Unauthorized", information: "my message"});
+		res.status(401).json({status: 401, message: "Unauthorized"});
 	}
 };
