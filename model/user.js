@@ -10,13 +10,11 @@ var User = new Schema({
     },
     firstName: String,
     lastName: String,
-    username: String,
-    password: String,
-    phoneNumber: String,
-    gender:  {
+    username: {
         type: String,
-        enum: ['M', 'F']
+        unique: true
     },
+    password: String,
     role: {
         type: String,
         enum: ['admin', 'advisor', 'customer']

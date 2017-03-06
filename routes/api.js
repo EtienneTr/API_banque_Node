@@ -19,6 +19,14 @@ router.get('/all', verify.verifyUser, function(req, res, next) {
     });
 });
 
+router.get('/user/:userName', verify.verifyUser, function(req, res, next) {
+    User.find({'username': req.params.userName}).then(function (user) {
+        res.status(200).json({status: 200, user: user});
+    }, function (err) {
+        console.log(err);
+    });
+});
+
 router.post('/login', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         console.log(user);
@@ -37,8 +45,6 @@ router.post('/register', function(req, res, next) {
         lastName: req.body.lastName,
         username: req.body.username,
         password: req.body.password,
-        phoneNumber: req.body.phoneNumber,
-        gender: req.body.gender,
         role: req.body.role
     }), req.body.password, function (err, user) {
         if(err){
