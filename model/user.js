@@ -8,8 +8,8 @@ var User = new Schema({
         type: String,
         unique: true
     },
-    firstName: String,
-    lastName: String,
+    firstname: String,
+    lastname: String,
     username: {
         type: String,
         unique: true
@@ -43,8 +43,8 @@ userModel.find({}).then(
                 }).save().then(function(account2){
                     var customer1 = new userModel({
                         mail: 'toto@toto.toto',
-                        firstName: 'Jean',
-                        lastName: 'Burellier',
+                        firstname: 'Jean',
+                        lastname: 'Burellier',
                         username: 'burellier',
                         phoneNumber: '0611223344',
                         gender: 'M',
@@ -69,8 +69,8 @@ userModel.find({}).then(
                             }).save().then(function(account2){
                                 userModel.register(new userModel({
                                     mail: 'tete@tete.tete',
-                                    firstName: 'Jean',
-                                    lastName: 'Burellier',
+                                    firstname: 'Jean',
+                                    lastname: 'Burellier',
                                     username: 'jean',
                                     phoneNumber: '0611223344',
                                     gender: 'M',
@@ -83,8 +83,8 @@ userModel.find({}).then(
                                 }), 'azerty', function(err, customer2){
                                     userModel.register(new userModel({
                                         mail: 'tata@tata.tata',
-                                        firstName: 'Sebouninet',
-                                        lastName: 'Foray',
+                                        firstname: 'Sebouninet',
+                                        lastname: 'Foray',
                                         username: 'miniForay',
                                         phoneNumber: '0611223344',
                                         gender: 'M',
@@ -102,8 +102,8 @@ userModel.find({}).then(
 
             userModel.register(new userModel({
                 mail: 'tutu@tutu.tutu',
-                firstName: 'Roger',
-                lastName: 'Colvray',
+                firstname: 'Roger',
+                lastname: 'Colvray',
                 username: 'admin',
                 phoneNumber: '0611223344',
                 gender: 'F',
