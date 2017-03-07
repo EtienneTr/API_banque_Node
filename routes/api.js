@@ -69,7 +69,7 @@ router.put('/user/:username', verify.verifyUser, function (req, res, next) {
                 res.json(err.message);
                 return;
             }
-            res.json(user);
+            res.status(200).json({status: 200, message: "user succesfully updated", user: user});
         });
     }, function (err) {
         console.log(err);
