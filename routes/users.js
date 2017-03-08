@@ -1,10 +1,11 @@
-let express   = require('express');
-let router    = express.Router();
-let User      = require('../model/user');
-let passport  = require('passport');
-let verify    = require('./verify');
+const express   = require('express');
+const router    = express.Router();
+const User      = require('../model/user');
+const passport  = require('passport');
+const verify    = require('./verify');
+const Account   = require('../model/account');
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     res.json({
         'status': 200,
         'message': 'Welcome to LTB bank !'
@@ -20,8 +21,8 @@ router.get('/customers', verify.verifyUser, function(req, res) {
 });
 
 router.get('/:username', verify.verifyUser, function(req, res) {
-    User.find({'username': req.params.username}).then(function (user) {
-        res.status(200).json({status: 200, user: user[0]});
+    User.findOne({'username': req.params.username}).then(function (user) {
+        res.status(200).json({status: 200, user: user});
     }, function (err) {
         console.log(err);
     });
@@ -41,18 +42,33 @@ router.post('/login', function (req, res, next) {
 });
 
 router.post('/register', function(req, res) {
-    User.register( new User({
+    User.register(new User({
         mail: req.body.mail,
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         username: req.body.username,
         role: req.body.role
     }), req.body.password, function (err, user) {
-        if(err){
+        if (err) {
             res.status(500).json({status: 500, message: err.message});
             return;
         }
-        res.status(200).json({status: 200, user: user});
+        new Account({
+            type: 'Checking account',
+            balance: 5000,
+            history: []
+        }).save().then(function (account1) {
+            new Account({
+                type: 'Checking account',
+                balance: 5000,
+                history: []
+            }).save().then(function (account2) {
+                user.accounts = [account1, account2];
+                user.save();
+                res.status(200).json({status: 200, user: user});
+            });
+
+        });
     });
 });
 
@@ -68,7 +84,7 @@ router.put('/:username', verify.verifyUser, function (req, res, next) {
                 res.json(err.message);
                 return;
             }
-            res.status(200).json({status: 200, message: "user succesfully updated", user: user});
+            res.status(200).json({status: 200, message: "user successfully updated", user: user});
         });
     }, function (err) {
         console.log(err);

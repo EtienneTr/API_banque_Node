@@ -1,10 +1,13 @@
-let mongoose              = require('mongoose');
-let Schema                = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema  = mongoose.Schema;
 
-let Transaction = new Schema({
-    date: Date,
+const Transaction = new Schema({
+    date: {
+        type: Date,
+        default: Date.now()
+    },
     amount: Number,
-    receiver: {type: Schema.Types.ObjectId, ref: 'Account', default: {}}
+    concerned: {type: Schema.Types.ObjectId, ref: 'Account', default: []}
 });
 
 module.exports = mongoose.model('Transaction', Transaction);

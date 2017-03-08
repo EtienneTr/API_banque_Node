@@ -26,14 +26,19 @@ exports.verifyUser = function(req, res, next) {
 };
 
 exports.verifyUserAccount = function(req, res, next) {
-    User.find({'username' : req.decoded._doc.username}).populate('accounts').then(function (user) {
+    User.findOne({'username' : req.decoded._doc.username}).populate('accounts').then(function (user) {
+        let accountOwned = false;
         for(let account of user.accounts){
             if(account._id == req.params.fromAccountId){
-                next()
+                accountOwned = true;
+                next();
             }
-            else{
-                res.status(401).json({status: 401, message: 'You are not allowed to transfer from an account that you don\'t own'});
-            }
+        }
+        if(!accountOwned) {
+            res.status(401).json({
+                status: 401,
+                message: 'You are not allowed to transfer from an account that you don\'t own'
+            });
         }
     }, function (err) {
         console.log(err);

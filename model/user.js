@@ -1,9 +1,9 @@
-var mongoose              = require('mongoose');
-var Schema                = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
-var Account               = require('./account');
+let mongoose              = require('mongoose');
+let Schema                = mongoose.Schema;
+let passportLocalMongoose = require('passport-local-mongoose');
+let Account               = require('./account');
 
-var User = new Schema({
+let User = new Schema({
     mail: {
         type: String,
         unique: true
@@ -25,7 +25,7 @@ var User = new Schema({
 
 User.plugin(passportLocalMongoose);
 
-var userModel     = mongoose.model('User', User);
+let userModel     = mongoose.model('User', User);
 
 userModel.find({}).then(
     function(customers) {
