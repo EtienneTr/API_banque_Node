@@ -21,7 +21,7 @@ router.get('/customers', verify.verifyUser, function(req, res) {
 });
 
 router.get('/:username', verify.verifyUser, function(req, res) {
-    User.findOne({'username': req.params.username}).then(function (user) {
+    User.findOne({'username': req.params.username}).populate('accounts').then(function (user) {
         res.status(200).json({status: 200, user: user});
     }, function (err) {
         console.log(err);

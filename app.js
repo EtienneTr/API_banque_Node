@@ -16,14 +16,11 @@ if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'development';
 }
 
-console.log(process.env.npm_package_name);
 mongoose.connect(config[process.env.NODE_ENV]);
 let db = mongoose.connection;
 db.once('open', function () {
   console.log("connected correctly to server");
 });
-
-// var api   = require('./routes/api');
 
 let app = express();
 
@@ -31,7 +28,6 @@ let app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
