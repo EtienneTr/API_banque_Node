@@ -3,8 +3,31 @@ const router      = express.Router();
 const User        = require('../model/user');
 const Account     = require('../model/account');
 const Transaction = require('../model/transaction');
-const passport    = require('passport');
 const verify      = require('./verify');
+
+
+router.get('/all', verify.verifyUser, function (req, res) {
+    User.find({}).populate('accounts').then(function (users) {
+        let resArray = [];
+        for(let user of users){
+            for(let account of user.accounts){
+                if(account.type == "Checking account"){
+                    resArray.push({accountId: account._id, user: user.lastname + ', ' + user.firstname});
+                }
+            }
+        }
+
+        res.status(200).json({status: 200, accounts: resArray});
+    });
+});
+
+router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, function (req, res) {
+    Account.findOne({'_id': req.params.accountId}).populate('history').then(function (account) {
+        res.status(200).json({status: 200, account: account});
+    }, function (err) {
+        res.json(err);
+    })
+});
 
 router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.verifyUserAccount, function (req, res) {
     const amount = parseInt(req.body.amount);
@@ -51,14 +74,6 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.v
             });
         }
     });
-});
-
-router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, function (req, res) {
-    Account.findOne({'_id': req.params.accountId}).populate('history').then(function (account) {
-        res.status(200).json({status: 200, account: account});
-    }, function (err) {
-        res.json(err);
-    })
 });
 
 module.exports = router;
