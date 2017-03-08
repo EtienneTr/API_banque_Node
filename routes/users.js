@@ -1,8 +1,8 @@
-var express   = require('express');
-var router    = express.Router();
-var User      = require('../model/user');
-var passport  = require('passport');
-var verify    = require('./verify');
+let express   = require('express');
+let router    = express.Router();
+let User      = require('../model/user');
+let passport  = require('passport');
+let verify    = require('./verify');
 
 router.get('/', function(req, res, next) {
     res.json({
@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get('/all', verify.verifyUser, function(req, res, next) {
+router.get('/customers', verify.verifyUser, function(req, res) {
     User.find({'role' : 'customer'}).populate('accounts').then(function (customers) {
         res.json({customers: customers});
     }, function (err) {
@@ -19,7 +19,7 @@ router.get('/all', verify.verifyUser, function(req, res, next) {
     });
 });
 
-router.get('/user/:username', verify.verifyUser, function(req, res, next) {
+router.get('/:username', verify.verifyUser, function(req, res) {
     User.find({'username': req.params.username}).then(function (user) {
         res.status(200).json({status: 200, user: user[0]});
     }, function (err) {
@@ -29,19 +29,18 @@ router.get('/user/:username', verify.verifyUser, function(req, res, next) {
 
 router.post('/login', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
-        console.log(user);
         req.logIn(user, function (err) {
             if(err){
                 res.status(401).json({status: 401, message: "Username or password invalid"});
                 return;
             }
-            var token = verify.getToken(user);
+            let token = verify.getToken(user);
             res.status(200).json({status: 200, message: "Authorized", username: user.username, token: token});
         })
     })(req, res, next);
 });
 
-router.post('/register', function(req, res, next) {
+router.post('/register', function(req, res) {
     User.register( new User({
         mail: req.body.mail,
         firstname: req.body.firstname,
@@ -57,7 +56,7 @@ router.post('/register', function(req, res, next) {
     });
 });
 
-router.put('/user/:username', verify.verifyUser, function (req, res, next) {
+router.put('/:username', verify.verifyUser, function (req, res, next) {
     User.findOne({'username' : req.params.username}).then(function (user) {
         if(req.body.mail)      user.mail      = req.body.mail;
         if(req.body.firstname) user.firstname = req.body.firstname;

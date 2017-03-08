@@ -1,7 +1,7 @@
-var mongoose              = require('mongoose');
-var Schema                = mongoose.Schema;
+let mongoose              = require('mongoose');
+let Schema                = mongoose.Schema;
 
-var Transaction = new Schema({
+let Transaction = new Schema({
     date: Date,
     amount: Number,
     receiver: {type: Schema.Types.ObjectId, ref: 'Account', default: {}}

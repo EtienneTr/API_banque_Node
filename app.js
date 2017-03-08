@@ -1,14 +1,16 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
+let express       = require('express');
+let path          = require('path');
+let favicon       = require('serve-favicon');
+let logger        = require('morgan');
+let cookieParser  = require('cookie-parser');
+let bodyParser    = require('body-parser');
+let mongoose      = require('mongoose');
+let passport      = require('passport');
+let localStrategy = require('passport-local').Strategy;
+let users         = require('./routes/users');
+let accounts      = require('./routes/accounts');
 
-var config = require('./config');
+let config = require('./config');
 
 if(!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'development';
@@ -16,14 +18,14 @@ if(!process.env.NODE_ENV) {
 
 console.log(process.env.npm_package_name);
 mongoose.connect(config[process.env.NODE_ENV]);
-var db = mongoose.connection;
+let db = mongoose.connection;
 db.once('open', function () {
   console.log("connected correctly to server");
 });
 
-var api   = require('./routes/api');
+// var api   = require('./routes/api');
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,17 +39,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport config
-var User = require('./model/user');
+let User = require('./model/user');
 app.use(passport.initialize());
 passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use('/api', api);
+app.use('/api/user', users);
+app.use('/api/account', accounts);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
