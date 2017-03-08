@@ -12,15 +12,7 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/customers', verify.verifyUser, function(req, res) {
-    User.find({'role' : 'customer'}).populate('accounts').then(function (customers) {
-        res.json({customers: customers});
-    }, function (err) {
-        console.log(err);
-    });
-})
-
-router.get('/all', verify.verifyUser, verify.verifyUserAdmin, function(req, res) {
+router.get('/all', verify.verifyUser, verify.verifyAdmin, function(req, res) {
     User.find({'role' : 'customer'}).then(function (customers) {
         User.find({'role' : 'advisor'}).populate('advised').then(function (advisors) {
             res.json({customers: customers, advisors: advisors});
@@ -71,7 +63,7 @@ router.post('/register', function(req, res) {
             history: []
         }).save().then(function (account1) {
             new Account({
-                type: 'Checking account',
+                type: 'Savings account',
                 balance: 5000,
                 history: []
             }).save().then(function (account2) {

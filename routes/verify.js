@@ -25,6 +25,33 @@ exports.verifyUser = function(req, res, next) {
     }
 };
 
+exports.verifyCustomer = function(req, res, next) {
+    if (req.decoded._doc.role !== 'customer') {
+        res.status(401).json({status: 401, message: "Unauthorized"});
+    }
+    else {
+        next();
+    }
+};
+
+exports.verifyAdvisor = function(req, res, next) {
+    if (req.decoded._doc.role !== 'advisor') {
+        res.status(401).json({status: 401, message: "Unauthorized"});
+    }
+    else {
+        next();
+    }
+};
+
+exports.verifyAdmin = function(req, res, next) {
+    if (req.decoded._doc.role !== 'admin') {
+        res.status(401).json({status: 401, message: "Unauthorized"});
+    }
+    else {
+        next();
+    }
+};
+
 exports.verifyUserAdmin = function(req, res, next) {
     if(req.decoded._doc.role !== 'admin'){
         next();
@@ -55,21 +82,51 @@ exports.verifyUserAccount = function(req, res, next) {
 };
 
 exports.verifyUserAccountGet = function(req, res, next) {
-    User.findOne({'username' : req.decoded._doc.username}).populate('accounts').then(function (user) {
-        let accountOwned = false;
-        for(let account of user.accounts){
-            if(account._id == req.params.accountId){
-                accountOwned = true;
-                next();
-            }
-        }
-        if(!accountOwned) {
+    console.log(req.decoded._doc);
+    switch (req.decoded._doc.role) {
+        case 'customer':
+            User.findOne({'username': req.decoded._doc.username}).populate('accounts').then(function (user) {
+                let accountOwned = false;
+                for (let account of user.accounts) {
+                    if (account._id == req.params.accountId) {
+                        accountOwned = true;
+                        next();
+                    }
+                }
+                if (!accountOwned) {
+                    res.status(401).json({
+                        status: 401,
+                        message: 'You don\'t own this account'
+                    });
+                }
+            }, function (err) {
+                console.log(err);
+            });
+            break;
+        case 'advisor':
+            User.findOne({'username': req.decoded._doc.username}).populate('advised').then(function (advisor) {
+                let authorized = false;
+                for (let user of advisor.advised) {
+                    for (let accountId of user.accounts) {
+                        if (req.params.accountId == accountId) {
+                            accountOwned = true;
+                            next();
+                        }
+                    }
+                }
+                if (!accountOwned) {
+                    res.status(401).json({
+                        status: 401,
+                        message: 'You don\'t own this account'
+                    });
+                }
+            });
+            break;
+
+        default:
             res.status(401).json({
                 status: 401,
                 message: 'You don\'t own this account'
             });
-        }
-    }, function (err) {
-        console.log(err);
-    });
+    }
 };

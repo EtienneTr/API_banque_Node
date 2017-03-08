@@ -29,7 +29,7 @@ router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, functi
     })
 });
 
-router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.verifyUserAccount, function (req, res) {
+router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyCustomer, verify.verifyUser, verify.verifyUserAccount, function (req, res) {
     const amount = parseInt(req.body.amount);
     Account.findOne({'_id': req.params.fromAccountId}).then(function (fromAccount) {
         if(fromAccount.balance < amount){
