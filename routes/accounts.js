@@ -53,8 +53,7 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.v
     });
 });
 
-router.get('/:accountId', verify.verifyUser, function (req, res) {
-    console.log(req.params);
+router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, function (req, res) {
     Account.findOne({'_id': req.params.accountId}).populate('history').then(function (account) {
         res.status(200).json({status: 200, account: account});
     }, function (err) {

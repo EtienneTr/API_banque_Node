@@ -44,3 +44,23 @@ exports.verifyUserAccount = function(req, res, next) {
         console.log(err);
     });
 };
+
+exports.verifyUserAccountGet = function(req, res, next) {
+    User.findOne({'username' : req.decoded._doc.username}).populate('accounts').then(function (user) {
+        let accountOwned = false;
+        for(let account of user.accounts){
+            if(account._id == req.params.accountId){
+                accountOwned = true;
+                next();
+            }
+        }
+        if(!accountOwned) {
+            res.status(401).json({
+                status: 401,
+                message: 'You don\'t own this account'
+            });
+        }
+    }, function (err) {
+        console.log(err);
+    });
+};
