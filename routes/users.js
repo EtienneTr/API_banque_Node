@@ -18,6 +18,18 @@ router.get('/customers', verify.verifyUser, function(req, res) {
     }, function (err) {
         console.log(err);
     });
+})
+
+router.get('/all', verify.verifyUser, verify.verifyUserAdmin, function(req, res) {
+    User.find({'role' : 'customer'}).then(function (customers) {
+        User.find({'role' : 'advisor'}).populate('advised').then(function (advisors) {
+            res.json({customers: customers, advisors: advisors});
+        }, function (err) {
+            console.log(err);
+        });
+    }, function (err) {
+        console.log(err);
+    });
 });
 
 router.get('/:username', verify.verifyUser, function(req, res) {

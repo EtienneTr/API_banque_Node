@@ -20,7 +20,7 @@ let User = new Schema({
         enum: ['admin', 'advisor', 'customer']
     },
     accounts: [{type: Schema.Types.ObjectId, ref: 'Account', default: []}],
-    advised: [{type: Schema.Types.ObjectId, ref: 'Customer', default: []}]
+    advised: [{type: Schema.Types.ObjectId, ref: 'User', default: []}]
 });
 
 User.plugin(passportLocalMongoose);
