@@ -34,6 +34,15 @@ exports.verifyCustomer = function(req, res, next) {
     }
 };
 
+exports.verifyAdvisedGet = function(req, res, next) {
+    if (req.decoded._doc.advised.indexOf(req.params.customerId) < 0) {
+        res.status(401).json({status: 401, message: "This user is not in your advised user"});
+    }
+    else {
+        next();
+    }
+};
+
 exports.verifyAdvisor = function(req, res, next) {
     if (req.decoded._doc.role !== 'advisor') {
         res.status(401).json({status: 401, message: "Unauthorized"});

@@ -25,29 +25,45 @@ router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, functi
     Account.findOne({'_id': req.params.accountId}).populate('history').then(function (account) {
         res.status(200).json({status: 200, account: account});
     }, function (err) {
-        res.json(err);
-    })
+        console.log(err);
+    });
 });
 
-router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyCustomer, verify.verifyUser, verify.verifyUserAccount, function (req, res) {
+router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.verifyCustomer, verify.verifyUserAccount, function (req, res) {
     const amount = parseInt(req.body.amount);
     Account.findOne({'_id': req.params.fromAccountId}).then(function (fromAccount) {
         if(fromAccount.balance < amount){
             res.status(401).json({status: 401, message: 'You don\'t have enough money on your account'});
         }
         else{
-            Account.findOne({'_id': req.params.toAccountId}).then(function (toAccount) {
+            let toAccount;
+            let fromAccount;
+            let toUser;
+
+            User.find().populate('accounts').then(function (users) {
+                for (let user of users) {
+                    for (let account of user.accounts) {
+                        if (account._id == req.params.toAccountId) {
+                            toUser = user;
+                            toAccount = account;
+                        }
+                        else if (account._id == req.params.fromAccountId) {
+                            fromAccount = account;
+                        }
+                    }
+                }
                 toAccount.balance   += amount;
                 fromAccount.balance -= amount;
 
                 let fromTransaction = new Transaction({
                     amount: -amount,
-                    concerned: fromAccount._id
+                    concerned: fromAccount._id,
                 });
 
                 let toTransaction = new Transaction({
                     amount: amount,
-                    concerned: fromAccount._id
+                    concerned: fromAccount._id,
+                    username: toUser.lastname + ', ' + toUser.firstname
                 });
 
                 fromTransaction.save(function (err) {

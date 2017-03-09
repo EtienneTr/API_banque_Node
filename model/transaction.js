@@ -7,7 +7,8 @@ const Transaction = new Schema({
         default: Date.now()
     },
     amount: Number,
-    concerned: {type: Schema.Types.ObjectId, ref: 'Account', default: []}
+    concerned: {type: Schema.Types.ObjectId, ref: 'Account', default: []},
+    username: String
 });
 
 module.exports = mongoose.model('Transaction', Transaction);

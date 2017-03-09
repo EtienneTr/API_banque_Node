@@ -39,4 +39,8 @@ router.delete('/:customerId', verify.verifyUser, verify.verifyAdvisor, function 
     });
 });
 
+router.get('/advised/:customerId', verify.verifyUser, verify.verifyAdvisor, verify.verifyAdvisedGet, function (req, res) {
+
+});
+
 module.exports = router;
