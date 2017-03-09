@@ -47,4 +47,12 @@ router.get('/advised/:customerId', verify.verifyToken, verify.verifyAdvisor, ver
     });
 });
 
+router.get('/customers', verify.verifyToken, verify.verifyAdvisor, function (req, res) {
+    User.findOne({'_id': req.decoded._doc._id}).populate('advised').then(function (user) {
+        res.status(200).json({status: 200, advised: user.advised});
+    }, function (err) {
+        console.log(err);
+    });
+});
+
 module.exports = router;

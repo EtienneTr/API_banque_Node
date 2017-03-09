@@ -40,7 +40,7 @@ router.post('/login', function (req, res, next) {
                 return;
             }
             let token = verify.getToken(user);
-            res.status(200).json({status: 200, message: "Authorized", username: user.username, token: token});
+            res.status(200).json({status: 200, message: "Authorized", username: user.username, role: user.role, token: token});
         })
     })(req, res, next);
 });
