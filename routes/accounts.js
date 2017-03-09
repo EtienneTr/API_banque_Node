@@ -39,6 +39,7 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyToken, verify.
             let toAccount;
             let fromAccount;
             let toUser;
+            let fromUser;
 
             User.find().populate('accounts').then(function (users) {
                 for (let user of users) {
@@ -49,6 +50,7 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyToken, verify.
                         }
                         else if (account._id == req.params.fromAccountId) {
                             fromAccount = account;
+                            fromUser    = user;
                         }
                     }
                 }
@@ -59,12 +61,13 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyToken, verify.
                     date: Date.now(),
                     amount: -amount,
                     concerned: fromAccount._id,
+                    username: fromUser.lastname + ', ' + fromUser.firstname
                 });
 
                 let toTransaction = new Transaction({
                     date: Date.now(),
                     amount: amount,
-                    concerned: fromAccount._id,
+                    concerned: toAccount._id,
                     username: toUser.lastname + ', ' + toUser.firstname
                 });
 
