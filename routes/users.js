@@ -51,7 +51,7 @@ router.post('/register', function(req, res) {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         username: req.body.username,
-        role: req.body.role
+        role: 'customer'
     }), req.body.password, function (err, user) {
         if (err) {
             res.status(500).json({status: 500, message: err.message});
