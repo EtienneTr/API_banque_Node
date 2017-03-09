@@ -54,7 +54,8 @@ exports.verifyAdvisor = function(req, res, next) {
 };
 
 exports.verifyAdmin = function(req, res, next) {
-    if(req.decoded._doc.role !== 'admin'){
+    console.log(req.decoded._doc);
+    if(req.decoded._doc.role == 'admin'){
         next();
     }
     else {
