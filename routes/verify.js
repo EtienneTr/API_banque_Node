@@ -110,12 +110,12 @@ exports.verifyAccountGet = function(req, res, next) {
                 for (let user of advisor.advised) {
                     for (let accountId of user.accounts) {
                         if (req.params.accountId == accountId) {
-                            accountOwned = true;
+                            authorized = true;
                             next();
                         }
                     }
                 }
-                if (!accountOwned) {
+                if (!authorized) {
                     res.status(401).json({
                         status: 401,
                         message: 'You don\'t own this account'
