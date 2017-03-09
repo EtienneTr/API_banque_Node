@@ -59,11 +59,13 @@ router.post('/register', function(req, res) {
         }
         new Account({
             type: 'Checking account',
+            releaseDate: Date.now(),
             balance: 5000,
             history: []
         }).save().then(function (account1) {
             new Account({
                 type: 'Savings account',
+                releaseDate: Date.now(),
                 balance: 5000,
                 history: []
             }).save().then(function (account2) {

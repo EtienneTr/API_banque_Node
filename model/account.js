@@ -11,6 +11,7 @@ const Account = new Schema({
         type: Number,
         default: 1000000
     },
+    releaseDate: Date,
     history: [{type: Schema.Types.ObjectId, ref: 'Transaction', default: []}]
 });
 
