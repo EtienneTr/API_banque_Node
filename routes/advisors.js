@@ -3,7 +3,7 @@ const router      = express.Router();
 const User        = require('../model/user');
 const verify      = require('./verify');
 
-router.put('/:customerId', verify.verifyUser, verify.verifyAdvisor, function (req, res) {
+router.put('/:customerId', verify.verifyToken, verify.verifyAdvisor, function (req, res) {
     User.findOne({'username' : req.decoded._doc.username}).then(function (advisor) {
         if (advisor.advised.indexOf(req.params.customerId) < 0) {
             advisor.advised.push(req.params.customerId);
@@ -21,7 +21,7 @@ router.put('/:customerId', verify.verifyUser, verify.verifyAdvisor, function (re
     });
 });
 
-router.delete('/:customerId', verify.verifyUser, verify.verifyAdvisor, function (req, res) {
+router.delete('/:customerId', verify.verifyToken, verify.verifyAdvisor, function (req, res) {
     User.findOne({'username' : req.decoded._doc.username}).then(function (advisor) {
         if (advisor.advised.indexOf(req.params.customerId) > 0) {
             advisor.advised.splice(advisor.advised.indexOf(req.params.customerId), 1);
@@ -39,8 +39,12 @@ router.delete('/:customerId', verify.verifyUser, verify.verifyAdvisor, function 
     });
 });
 
-router.get('/advised/:customerId', verify.verifyUser, verify.verifyAdvisor, verify.verifyAdvisedGet, function (req, res) {
-
+router.get('/advised/:customerId', verify.verifyToken, verify.verifyAdvisor, verify.verifyAdvisedGet, function (req, res) {
+    User.findOne({'_id': req.params.customerId}).populate('accounts').then(function (user) {
+        res.status(200).json({status: 200, user: user});
+    }, function (err) {
+        console.log(err);
+    });
 });
 
 module.exports = router;

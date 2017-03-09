@@ -7,7 +7,7 @@ exports.getToken = function(user) {
     return jwt.sign(user, config.secretKey);
 };
 
-exports.verifyUser = function(req, res, next) {
+exports.verifyToken = function(req, res, next) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
     if (token) {
         jwt.verify(token, config.secretKey, function(err, decoded) {
@@ -44,6 +44,7 @@ exports.verifyAdvisedGet = function(req, res, next) {
 };
 
 exports.verifyAdvisor = function(req, res, next) {
+    console.log(req.decoded._doc);
     if (req.decoded._doc.role !== 'advisor') {
         res.status(401).json({status: 401, message: "Unauthorized"});
     }
@@ -53,15 +54,6 @@ exports.verifyAdvisor = function(req, res, next) {
 };
 
 exports.verifyAdmin = function(req, res, next) {
-    if (req.decoded._doc.role !== 'admin') {
-        res.status(401).json({status: 401, message: "Unauthorized"});
-    }
-    else {
-        next();
-    }
-};
-
-exports.verifyUserAdmin = function(req, res, next) {
     if(req.decoded._doc.role !== 'admin'){
         next();
     }
@@ -90,7 +82,7 @@ exports.verifyUserAccount = function(req, res, next) {
     });
 };
 
-exports.verifyUserAccountGet = function(req, res, next) {
+exports.verifyAccountGet = function(req, res, next) {
     console.log(req.decoded._doc);
     switch (req.decoded._doc.role) {
         case 'customer':

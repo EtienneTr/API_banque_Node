@@ -12,7 +12,7 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/all', verify.verifyUser, verify.verifyAdmin, function(req, res) {
+router.get('/all', verify.verifyToken, verify.verifyAdmin, function(req, res) {
     User.find({'role' : 'customer'}).then(function (customers) {
         User.find({'role' : 'advisor'}).populate('advised').then(function (advisors) {
             res.json({customers: customers, advisors: advisors});
@@ -24,7 +24,7 @@ router.get('/all', verify.verifyUser, verify.verifyAdmin, function(req, res) {
     });
 });
 
-router.get('/:username', verify.verifyUser, function(req, res) {
+router.get('/:username', verify.verifyToken, function(req, res) {
     User.findOne({'username': req.params.username}).populate('accounts').then(function (user) {
         res.status(200).json({status: 200, user: user});
     }, function (err) {
@@ -76,7 +76,7 @@ router.post('/register', function(req, res) {
     });
 });
 
-router.put('/:username', verify.verifyUser, function (req, res, next) {
+router.put('/:username', verify.verifyToken, function (req, res, next) {
     User.findOne({'username' : req.params.username}).then(function (user) {
         if(req.body.mail)      user.mail      = req.body.mail;
         if(req.body.firstname) user.firstname = req.body.firstname;

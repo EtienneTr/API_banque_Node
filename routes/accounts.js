@@ -6,7 +6,7 @@ const Transaction = require('../model/transaction');
 const verify      = require('./verify');
 
 
-router.get('/all', verify.verifyUser, function (req, res) {
+router.get('/all', verify.verifyToken, function (req, res) {
     User.find({}).populate('accounts').then(function (users) {
         let resArray = [];
         for(let user of users){
@@ -21,7 +21,7 @@ router.get('/all', verify.verifyUser, function (req, res) {
     });
 });
 
-router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, function (req, res) {
+router.get('/:accountId', verify.verifyToken, verify.verifyAccountGet, function (req, res) {
     Account.findOne({'_id': req.params.accountId}).populate('history').then(function (account) {
         res.status(200).json({status: 200, account: account});
     }, function (err) {
@@ -29,7 +29,7 @@ router.get('/:accountId', verify.verifyUser, verify.verifyUserAccountGet, functi
     });
 });
 
-router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.verifyCustomer, verify.verifyUserAccount, function (req, res) {
+router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyToken, verify.verifyCustomer, verify.verifyUserAccount, function (req, res) {
     const amount = parseInt(req.body.amount);
     Account.findOne({'_id': req.params.fromAccountId}).then(function (fromAccount) {
         if(fromAccount.balance < amount){
@@ -56,11 +56,13 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyUser, verify.v
                 fromAccount.balance -= amount;
 
                 let fromTransaction = new Transaction({
+                    date: Date.now(),
                     amount: -amount,
                     concerned: fromAccount._id,
                 });
 
                 let toTransaction = new Transaction({
+                    date: Date.now(),
                     amount: amount,
                     concerned: fromAccount._id,
                     username: toUser.lastname + ', ' + toUser.firstname
