@@ -12,18 +12,6 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/all', verify.verifyToken, verify.verifyAdmin, function(req, res) {
-    User.find({'role' : 'customer'}).then(function (customers) {
-        User.find({'role' : 'advisor'}).populate('advised').then(function (advisors) {
-            res.json({customers: customers, advisors: advisors});
-        }, function (err) {
-            console.log(err);
-        });
-    }, function (err) {
-        console.log(err);
-    });
-});
-
 router.get('/:username', verify.verifyToken, function(req, res) {
     User.findOne({'username': req.params.username}).populate('accounts').then(function (user) {
         res.status(200).json({status: 200, user: user});
