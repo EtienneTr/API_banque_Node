@@ -60,15 +60,15 @@ router.post('/transfer/:fromAccountId/:toAccountId', verify.verifyToken, verify.
                 let fromTransaction = new Transaction({
                     date: Date.now(),
                     amount: -amount,
-                    concerned: fromAccount._id,
-                    username: fromUser.lastname + ', ' + fromUser.firstname
+                    concerned: toAccount._id,
+                    username: toUser.lastname + ', ' + toUser.firstname
                 });
 
                 let toTransaction = new Transaction({
                     date: Date.now(),
                     amount: amount,
-                    concerned: toAccount._id,
-                    username: toUser.lastname + ', ' + toUser.firstname
+                    concerned: fromAccount._id,
+                    username: fromUser.lastname + ', ' + fromUser.firstname
                 });
 
                 fromTransaction.save(function (err) {
