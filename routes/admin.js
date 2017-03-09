@@ -4,7 +4,7 @@ const User        = require('../model/user');
 const verify      = require('./verify');
 
 router.put('/:advisorId/:customerId', verify.verifyToken, verify.verifyAdmin, function (req, res) {
-    User.findOne({'_id' : req.decoded._doc.username}).then(function (advisor) {
+    User.findOne({'_id' : req.decoded._doc._id}).then(function (advisor) {
         if (advisor.advised.indexOf(req.params.customerId) < 0) {
             advisor.advised.push(req.params.customerId);
             advisor.save(function (err, advisor) {
@@ -22,7 +22,7 @@ router.put('/:advisorId/:customerId', verify.verifyToken, verify.verifyAdmin, fu
 });
 
 router.delete('/:advisorId/:customerId', verify.verifyToken, verify.verifyAdmin, function (req, res) {
-    User.findOne({'username' : req.decoded._doc.username}).then(function (advisor) {
+    User.findOne({'_id' : req.decoded._doc._id}).then(function (advisor) {
         if (advisor.advised.indexOf(req.params.customerId) > 0) {
             advisor.advised.splice(advisor.advised.indexOf(req.params.customerId), 1);
             advisor.save(function (err, advisor) {
