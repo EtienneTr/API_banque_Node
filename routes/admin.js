@@ -50,3 +50,5 @@ router.get('/all', verify.verifyToken, verify.verifyAdmin, function(req, res) {
         console.log(err);
     });
 });
+
+module.exports = router;
