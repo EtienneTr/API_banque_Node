@@ -33,10 +33,19 @@ userModel.find({}).then(
         if (customers.length == 0) {
 
             userModel.register(new userModel({
-                mail: 'tata@tata.tata',
+                mail: 'toto@toto.toto',
                 firstname: 'Sebouninet',
                 lastname: 'Foray',
                 username: 'miniForay',
+                advised: [],
+                role: 'advisor'
+            }), 'azerty', function () {});
+
+            userModel.register(new userModel({
+                mail: 'tata@tata.tata',
+                firstname: 'Jean',
+                lastname: 'Burellier',
+                username: 'jean',
                 advised: [],
                 role: 'advisor'
             }), 'azerty', function () {});
