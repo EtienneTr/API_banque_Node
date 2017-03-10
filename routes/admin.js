@@ -8,11 +8,13 @@ router.put('/:advisorId/:customerId', verify.verifyToken, verify.verifyAdmin, fu
         if (advisor.advised.indexOf(req.params.customerId) < 0) {
             advisor.advised.push(req.params.customerId);
             advisor.save(function (err, advisor) {
-                res.status(200).json({
-                    status: 200,
-                    message: 'User successfully added to the advised list',
-                    advisor: advisor
-                });
+                User.findOne({'_id' : req.params.advisorId}).populate('advised').then(function (advisor) {
+                    res.status(200).json({
+                        status: 200,
+                        message: 'User successfully added to the advised list',
+                        advisor: advisor
+                    });
+                })
             });
         }
         else {
@@ -26,10 +28,12 @@ router.delete('/:advisorId/:customerId', verify.verifyToken, verify.verifyAdmin,
         if (advisor.advised.indexOf(req.params.customerId) > 0) {
             advisor.advised.splice(advisor.advised.indexOf(req.params.customerId), 1);
             advisor.save(function (err, advisor) {
-                res.status(200).json({
-                    status: 200,
-                    message: 'User successfully removed to the advised list',
-                    advisor: advisor
+                User.findOne({'_id' : req.params.advisorId}).populate('advised').then(function (advisor) {
+                    res.status(200).json({
+                        status: 200,
+                        message: 'User successfully removed to the advised list',
+                        advisor: advisor
+                    });
                 });
             });
         }
