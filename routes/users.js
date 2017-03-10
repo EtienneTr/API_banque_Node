@@ -86,7 +86,7 @@ router.put('/:username', verify.verifyToken, function (req, res, next) {
 });
 
 router.post('/upgrade', verify.verifyToken, verify.verifyAdmin, function (req, res) {
-   User.find({'_id': req.body.customerId}).then(function (user) {
+   User.findOne({'_id': req.body.customerId}).then(function (user) {
        if(user.role !== 'customer'){
            res.status(401).json({status: 401, message: 'Only customers can only be upgraded to advisor'});
            return;
